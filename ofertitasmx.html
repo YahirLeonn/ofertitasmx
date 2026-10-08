@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ofertitas · ofertas del día en Mercado Libre</title>
+<meta name="description" content="Las ofertas y cupones de Mercado Libre que vamos encontrando cada día, con precio real y descuento.">
+<meta property="og:title" content="Ofertitas · ofertas del día">
+<meta property="og:description" content="Ofertas y cupones de Mercado Libre revisados a mano, todos los días.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 30 30 8h24v24L32 54a4 4 0 0 1-6 0L8 36a4 4 0 0 1 0-6z' fill='%23E0312B'/%3E%3Ccircle cx='44' cy='20' r='5' fill='%23fff'/%3E%3C/svg%3E">
+<script>
+/* =========  CAMBIA AQUÍ TUS DATOS  ========= */
+var CONFIG = {
+  nombre: "OfertitasMx",
+  frase: "Ofertas de Mercado Libre que revisamos a mano, todos los días.",
+  // Link CSV de tu hoja publicada (Archivo → Compartir → Publicar en la web → pestaña Ofertas → CSV)
+  csv: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQQ2QGDPJbRkdiR5OM2otgc3lT-EoAjvYyjugYbVLDHWf4WBn-oBxi51VcRqhtxV6iWPicVYZMFT-g1/pub?gid=2095902823&single=true&output=csv",
+  // Tu link de afiliado de la página de cupones (déjalo vacío si no quieres el botón)
+  cupones: "https://mercadolibre.com/sec/2dAx4U6",
+  telegram: "https://web.telegram.org/a/#-1002461435872",   // ej. https://t.me/tucanal
+  whatsapp: "",   // link de tu canal de WhatsApp
+  facebook: "https://www.facebook.com/share/1DH9Cx9UTb/?mibextid=wwXIfr",
+  instagram: "",
+  tiktok: "",
+  maximo: 60,     // cuántas ofertas mostrar
+  top: 10         // cuántas van en el resumen para WhatsApp (abre tu página con #admin al final)
+};
+</script>
+<style>
+:root{
+  --fondo:#E9EDF3; --papel:#FFFFFF; --tinta:#1A1F36; --gris:#5E6478; --linea:#D6DBE5;
+  --rojo:#E0312B; --verde:#0F7A55; --azul:#2A3A8C; --azul-claro:#E3E7F7;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--fondo);color:var(--tinta);font-family:"Archivo",system-ui,sans-serif;font-variation-settings:"wdth" 100;font-size:16px;line-height:1.45}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px;border-radius:6px}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 48px}
+
+/* Encabezado */
+header{padding:36px 0 20px}
+.marca{display:flex;align-items:center;gap:12px}
+.marca svg{flex:none}
+h1{margin:0;font-size:44px;line-height:.95;font-weight:900;font-variation-settings:"wdth" 70;letter-spacing:-.01em}
+.frase{margin:12px 0 18px;color:var(--gris);max-width:40ch}
+.redes{display:flex;flex-wrap:wrap;gap:8px}
+.redes a{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:600;font-size:15px;padding:10px 14px;border-radius:999px;background:var(--papel);border:1px solid var(--linea)}
+.redes a.tg{background:var(--azul);color:#fff;border-color:var(--azul)}
+.redes svg{width:18px;height:18px}
+.cupon{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:14px 16px;border-radius:14px;background:var(--papel);border:2px dashed var(--rojo);text-decoration:none}
+.cupon b{font-size:17px}
+.cupon span{color:var(--gris);font-size:14px;display:block}
+.cupon i{font-style:normal;font-weight:800;color:var(--rojo);white-space:nowrap}
+
+/* Filtros */
+.filtros{position:sticky;top:0;z-index:5;background:var(--fondo);padding:12px 0 10px;margin:0 -16px;padding-left:16px;padding-right:16px}
+.buscar{width:100%;font:inherit;padding:12px 14px;border-radius:12px;border:1px solid var(--linea);background:var(--papel)}
+.cats{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;font:inherit;font-size:14px;font-weight:600;padding:7px 12px;border-radius:999px;border:1px solid var(--linea);background:var(--papel);color:var(--tinta);cursor:pointer}
+.cats button[aria-pressed=true]{background:var(--tinta);color:#fff;border-color:var(--tinta)}
+
+/* Ofertas: cada una es una etiqueta de precio */
+.lista{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:12px}
+.of{position:relative;display:grid;grid-template-columns:76px 1fr;gap:14px;background:var(--papel);border-radius:16px;padding:14px;border:1px solid var(--linea)}
+.foto{width:76px;height:76px;border-radius:12px;background:var(--azul-claro);display:grid;place-items:center;font-size:34px;overflow:hidden}
+.foto img{width:100%;height:100%;object-fit:contain;background:#fff}
+.tit{margin:0;padding-right:70px;font-size:15px;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.precio{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-top:6px}
+.ahora{font-size:30px;line-height:1;font-weight:800;font-variation-settings:"wdth" 75;font-feature-settings:"tnum"}
+.ahora small{font-size:.55em;vertical-align:.55em;margin-right:1px}
+.antes{color:var(--gris);text-decoration:line-through;font-size:14px}
+.desc{position:absolute;top:-8px;right:12px;background:var(--rojo);color:#fff;font-weight:900;font-variation-settings:"wdth" 80;font-size:17px;padding:6px 10px 5px;border-radius:8px;transform:rotate(4deg);box-shadow:0 2px 0 rgba(26,31,54,.25)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:6px;font-size:13px;color:var(--gris)}
+.meta .env{color:var(--verde);font-weight:700}
+.ver{grid-column:1/-1;display:block;text-align:center;text-decoration:none;font-weight:700;padding:11px;border-radius:10px;background:var(--tinta);color:#fff}
+.ver:hover{background:var(--azul)}
+
+.aviso{background:#FFF4D6;border:1px solid #F0D9A0;color:#6B5200;padding:10px 12px;border-radius:10px;font-size:14px;margin:12px 0 0}
+.vacio{text-align:center;color:var(--gris);padding:32px 8px}
+.mas{display:block;width:100%;margin-top:14px;font:inherit;font-weight:700;padding:12px;border-radius:12px;border:1px solid var(--linea);background:var(--papel);cursor:pointer}
+.admin{background:var(--papel);border:2px solid var(--azul);border-radius:14px;padding:14px;margin:16px 0 0}
+.admin h2{margin:0 0 4px;font-size:18px}.admin p{margin:0 0 10px;color:var(--gris);font-size:14px}
+.admin textarea{width:100%;min-height:260px;font:inherit;font-size:14px;padding:10px;border-radius:10px;border:1px solid var(--linea);background:#F7F8FB}
+.admin .bts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.admin button{font:inherit;font-weight:700;padding:10px 14px;border-radius:10px;border:1px solid var(--linea);background:var(--papel);cursor:pointer}
+.admin button.wa{background:#1FA855;border-color:#1FA855;color:#fff}.admin select{font:inherit;padding:8px;border-radius:8px;border:1px solid var(--linea)}
+footer{margin-top:32px;font-size:13px;color:var(--gris)}
+footer p{margin:6px 0}
+@media (min-width:600px){h1{font-size:56px}.of{grid-template-columns:96px 1fr}.foto{width:96px;height:96px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="marca">
+      <svg width="44" height="44" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 30 30 8h24v24L32 54a4 4 0 0 1-6 0L8 36a4 4 0 0 1 0-6z" fill="#E0312B"/><circle cx="44" cy="20" r="5" fill="#E9EDF3"/></svg>
+      <h1 id="nombre">Ofertitas</h1>
+    </div>
+    <p class="frase" id="frase"></p>
+    <nav class="redes" id="redes" aria-label="Nuestras redes"></nav>
+    <a class="cupon" id="cupon" hidden target="_blank" rel="noopener sponsored">
+      <div><b>Cupones de hoy</b><span>Actívalos antes de comprar, se acaban rápido.</span></div><i>Ver cupones</i>
+    </a>
+  </header>
+
+  <div class="filtros">
+    <label for="q" class="sr" style="position:absolute;left:-9999px">Buscar oferta</label>
+    <input id="q" class="buscar" type="search" placeholder="Buscar: audífonos, colchón, perfume…" autocomplete="off">
+    <div class="cats" id="cats" role="group" aria-label="Categorías"></div>
+  </div>
+
+  <section class="admin" id="admin" hidden>
+    <h2>Resumen para WhatsApp</h2>
+    <p>Solo tú lo ves (por el #admin del link). Copia el mensaje y pégalo en tu canal o grupo.</p>
+    <div class="bts" style="margin:0 0 8px"><select id="adia"><option value="0">Hoy</option><option value="1">Ayer</option><option value="7">Últimos 7 días</option></select><select id="anum"><option>5</option><option selected>10</option><option>15</option></select></div>
+    <textarea id="atxt" aria-label="Mensaje para WhatsApp"></textarea>
+    <div class="bts"><button class="wa" id="acopy">Copiar mensaje</button><button id="ashare">Compartir…</button></div>
+    <p id="aok" style="margin:8px 0 0"></p>
+  </section>
+  <div id="aviso"></div>
+  <ul class="lista" id="lista" aria-live="polite"></ul>
+  <button class="mas" id="mas" hidden>Ver más ofertas</button>
+
+  <footer>
+    <p>Los precios pueden cambiar o agotarse en cualquier momento; revisa el precio final en Mercado Libre antes de pagar.</p>
+    <p>Somos afiliados: si compras con estos links podemos recibir una comisión, sin costo extra para ti. No somos Mercado Libre ni hablamos en su nombre.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+document.title=CONFIG.nombre+" · ofertas del día en Mercado Libre";
+$("nombre").textContent=CONFIG.nombre;$("frase").textContent=CONFIG.frase;
+
+/* Redes */
+var IC={
+  telegram:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 4.3 2.9 11.5c-1 .4-1 1.6 0 1.9l4.6 1.5 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.5 4.7 3.5c.7.5 1.7.1 1.9-.7L23 5.6c.2-1-.7-1.7-1.5-1.3zm-3.4 4.1-8.4 7.6-.3 3.4-1.5-4.6 9.7-6.6c.4-.2.7.1.5.2z"/></svg>',
+  whatsapp:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-1.3-.6-2.3-1.5-3-2.7-.2-.3.2-.3.6-1 .1-.1 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.8.8-1 1.8-.6 3 .5 1.5 1.6 3 3.3 4.1 1.9 1.2 3 1.1 3.7.9.7-.2 1.5-.9 1.6-1.6.1-.4.1-.7 0-.8l-.4-.2z"/></svg>',
+  facebook:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3c-2.8 0-4.5 1.8-4.5 4.6V11H7v4h2.5v8h4v-8h3l.5-4h-3.5V9c0-.6.4-1 1-1z"/></svg>',
+  instagram:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
+  tiktok:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c.4 2.2 1.9 3.8 4 4v3.3c-1.5 0-2.9-.4-4-1.2v6.6A6.2 6.2 0 1 1 10.3 9.5v3.4a2.9 2.9 0 1 0 2.8 2.9V3h3.4z"/></svg>'
+};
+var NOM={telegram:"Canal de Telegram",whatsapp:"WhatsApp",facebook:"Facebook",instagram:"Instagram",tiktok:"TikTok"};
+["telegram","whatsapp","facebook","instagram","tiktok"].forEach(function(k){
+  if(!CONFIG[k])return;var a=document.createElement("a");a.href=CONFIG[k];a.target="_blank";a.rel="noopener";
+  if(k==="telegram")a.className="tg";a.innerHTML=IC[k]+"<span>"+NOM[k]+"</span>";$("redes").appendChild(a)});
+if(CONFIG.cupones){$("cupon").href=CONFIG.cupones;$("cupon").hidden=false}
+
+/* CSV con comillas y saltos de línea */
+function parseCSV(t){var R=[],r=[],f="",q=false;for(var i=0;i<t.length;i++){var c=t[i];
+  if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+  else if(c==='"')q=true;else if(c===","){r.push(f);f=""}else if(c==="\n"){r.push(f);R.push(r);r=[];f=""}else if(c!=="\r")f+=c}
+  if(f!==""||r.length){r.push(f);R.push(r)}return R}
+function norm(s){return String(s||"").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+function num(s){s=String(s||"").replace(/[^\d.,]/g,"");if(!s)return 0;if(/,\d{1,2}$/.test(s))s=s.replace(/\./g,"").replace(",",".");else s=s.replace(/,/g,"");return parseFloat(s)||0}
+function money(n){return n.toLocaleString("es-MX",{maximumFractionDigits:n%1?2:0})}
+function fecha(s){var m=String(s||"").match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(!m)return null;return new Date(+m[3],+m[2]-1,+m[1])}
+function cuando(d){if(!d)return"";var h=new Date();h.setHours(0,0,0,0);var x=Math.round((h-d)/864e5);
+  if(x<=0)return"Hoy";if(x===1)return"Ayer";if(x<7)return"Hace "+x+" días";return d.toLocaleDateString("es-MX",{day:"numeric",month:"short"})}
+var EMO=[[/tecno|celular|comput|electr|audio|video|gaming|consola|camara|cámara/,"🎧"],[/hogar|mueble|cocina|colch|jard|decor/,"🛋️"],[/ropa|moda|zapat|calzado|accesorios de moda/,"👟"],[/belleza|cuidado personal|perfum|salud/,"💄"],[/deporte|fitness|bici/,"🏋️"],[/bebe|bebé|jugue|niñ/,"🧸"],[/auto|moto|vehic/,"🚗"],[/herramient|construc|industria/,"🛠️"],[/mascota|animal/,"🐾"],[/aliment|bebida|super/,"🛒"],[/libro|musica|música|pelic/,"📚"]];
+function emoji(c){c=norm(c);for(var i=0;i<EMO.length;i++)if(EMO[i][0].test(c))return EMO[i][1];return"🏷️"}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+var TODAS=[],CAT="",MOSTRAR=CONFIG.maximo||60;
+function cargar(rows){
+  var H=rows[0].map(norm),col=function(){for(var i=0;i<arguments.length;i++){var j=H.indexOf(norm(arguments[i]));if(j>=0)return j}return -1};
+  var cT=col("Producto"),cL=col("Link de afiliado"),cC=col("Categoría"),cA=col("Precio ahora"),cP=col("Precio antes"),cE=col("Envío gratis"),cF=col("Fecha"),cU=col("Publicado"),cI=col("Imagen","Foto");
+  var out=[];
+  for(var i=rows.length-1;i>0;i--){var r=rows[i];var t=(r[cT]||"").trim(),l=(r[cL]||"").trim();
+    if(!t||!/^https?:\/\//.test(l))continue;if(cU>=0&&r[cU]&&!/^s[ií]/i.test(r[cU].trim()))continue;
+    var a=num(r[cA]),p=num(r[cP]);if(p&&a&&p<=a)p=0;
+    out.push({t:t,l:l,c:(r[cC]||"").trim(),a:a,p:p,d:p&&a?Math.round((1-a/p)*100):0,e:cE>=0&&/^s[ií]/i.test((r[cE]||"").trim()),f:fecha(r[cF]),img:cI>=0?(r[cI]||"").trim():""})}
+  var vistos={};TODAS=out.filter(function(o){var k=norm(o.t);if(vistos[k])return false;return vistos[k]=1});
+  var cs={};TODAS.forEach(function(o){if(o.c)cs[o.c]=(cs[o.c]||0)+1});
+  var box=$("cats");box.innerHTML="";var mk=function(n,v){var b=document.createElement("button");b.textContent=n;b.setAttribute("aria-pressed",v===CAT);b.onclick=function(){CAT=v;MOSTRAR=CONFIG.maximo||60;[].forEach.call(box.children,function(x){x.setAttribute("aria-pressed",x===b)});pintar()};box.appendChild(b)};
+  mk("Todas","");Object.keys(cs).sort(function(x,y){return cs[y]-cs[x]}).forEach(function(c){mk(emoji(c)+" "+c,c)});
+  pintar();resumen()}
+function pintar(){
+  var q=norm($("q").value).split(/\s+/).filter(Boolean);
+  var L=TODAS.filter(function(o){if(CAT&&o.c!==CAT)return false;var s=norm(o.t+" "+o.c);return q.every(function(w){return s.indexOf(w)>=0})});
+  var ul=$("lista");ul.innerHTML="";
+  if(!L.length){ul.innerHTML='<li class="vacio">'+(TODAS.length?"No encontramos ofertas con esa búsqueda. Prueba con otra palabra o elige “Todas”.":"Todavía no hay ofertas publicadas.")+"</li>";$("mas").hidden=true;return}
+  L.slice(0,MOSTRAR).forEach(function(o){var li=document.createElement("li");li.className="of";
+    li.innerHTML=(o.d>=5?'<span class="desc">-'+o.d+'%</span>':"")+
+      '<div class="foto">'+(o.img?'<img src="'+esc(o.img)+'" alt="" loading="lazy">':'<span aria-hidden="true">'+emoji(o.c)+"</span>")+"</div>"+
+      '<div><h2 class="tit">'+esc(o.t)+'</h2><div class="precio">'+(o.a?'<span class="ahora"><small>$</small>'+money(o.a)+"</span>":"")+(o.p?'<span class="antes">$'+money(o.p)+"</span>":"")+"</div>"+
+      '<div class="meta">'+(o.e?'<span class="env">Envío gratis</span>':"")+(o.f?"<span>"+cuando(o.f)+"</span>":"")+(o.c?"<span>"+esc(o.c)+"</span>":"")+"</div></div>"+
+      '<a class="ver" href="'+esc(o.l)+'" target="_blank" rel="noopener sponsored">Ver en Mercado Libre</a>';
+    ul.appendChild(li)});
+  $("mas").hidden=L.length<=MOSTRAR}
+$("q").addEventListener("input",function(){MOSTRAR=CONFIG.maximo||60;pintar()});
+
+/* Resumen para WhatsApp: abre tu página con #admin al final del link */
+var ADMIN=/(^|#|&)admin\b/.test(location.hash.slice(1))||location.hash==="#admin";
+var NUM=["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟","1️⃣1️⃣","1️⃣2️⃣","1️⃣3️⃣","1️⃣4️⃣","1️⃣5️⃣"];
+function corto(t,n){t=String(t).replace(/\s+/g," ").trim();return t.length>n?t.slice(0,n-1).replace(/\s\S*$/,"")+"…":t}
+function resumen(){
+  if(!ADMIN)return;$("admin").hidden=false;
+  var dias=+$("adia").value,n=+$("anum").value,h=new Date();h.setHours(0,0,0,0);
+  var desde=new Date(h-(dias===1?1:dias)*864e5),hasta=dias===1?h:new Date(h.getTime()+864e5);
+  var L=TODAS.filter(function(o){return o.f&&o.f>=desde&&o.f<hasta});
+  L.sort(function(a,b){return (b.d-a.d)||(b.p-b.a)-(a.p-a.a)});L=L.slice(0,n);
+  var tit=dias===0?"DE HOY":dias===1?"DE AYER":"DE LA SEMANA";
+  var dia=(dias===1?new Date(h-864e5):h).toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long"});
+  var o=["🔥 *TOP "+L.length+" OFERTAS "+tit+"* 🔥",dias===7?"":"_"+dia+"_",""];
+  if(!L.length)o=["(Todavía no hay ofertas "+(dias===0?"de hoy":dias===1?"de ayer":"de esta semana")+" en tu hoja.)"];
+  L.forEach(function(x,i){o.push(NUM[i]+" *"+corto(x.t,60)+"*");
+    o.push("💲 *$"+money(x.a)+"*"+(x.p?" ~$"+money(x.p)+"~ (-"+x.d+"%)":"")+(x.e?" · 🚚 Envío gratis":""));
+    o.push("👉 "+x.l,"")});
+  var web=location.href.split("#")[0];
+  if(L.length){o.push("🛒 *Ver todas las ofertas:* "+web);if(CONFIG.telegram)o.push("📢 Telegram: "+CONFIG.telegram);if(CONFIG.facebook)o.push("👍 Facebook: "+CONFIG.facebook);if(CONFIG.instagram)o.push("📸 Instagram: "+CONFIG.instagram);o.push("","_Precios sujetos a cambio. Links de afiliado._")}
+  $("atxt").value=o.filter(function(x,i,a){return !(x===""&&a[i-1]==="")}).join("\n").trim()}
+["adia","anum"].forEach(function(id){$(id).addEventListener("change",resumen)});
+$("acopy").onclick=function(){var t=$("atxt").value;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){$("aok").textContent="✓ Copiado. Pégalo en WhatsApp."},function(){$("atxt").select();$("aok").textContent="Selecciónalo y copia (Ctrl+C)."})};
+$("ashare").onclick=function(){var t=$("atxt").value;if(navigator.share)navigator.share({text:t}).catch(function(){});else window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank")};
+window.addEventListener("hashchange",function(){ADMIN=location.hash==="#admin";if(ADMIN)resumen();else $("admin").hidden=true});
+$("mas").onclick=function(){MOSTRAR+=CONFIG.maximo||60;pintar()};
+
+var EJEMPLO='Fecha,Categoría,Producto,Precio antes,Precio ahora,Envío gratis,Link de afiliado,Publicado\n'+
+'01/10/2026,Hogar y muebles,Colchón Matrimonial Memory Foam 25 cm,"$8,999","$4,299",Sí,https://meli.la/ejemplo,Sí\n'+
+'01/10/2026,Electrónica,Audífonos Inalámbricos con Cancelación de Ruido,"$1,499",$689,Sí,https://meli.la/ejemplo,Sí\n'+
+'01/10/2026,Ropa y calzado,Bóxers Wilson Liso Transpirable Pack 4 Para Hombre,$499,$290,Sí,https://meli.la/ejemplo,Sí\n'+
+'01/10/2026,Belleza y cuidado personal,Perfume para Hombre Eau de Toilette 100 ml,"$1,250",$799,No,https://meli.la/ejemplo,Sí\n'+
+'01/10/2026,Herramientas,Taladro Rotomartillo Inalámbrico 20V con 2 Baterías,"$2,890","$1,668",Sí,https://meli.la/ejemplo,Sí\n';
+function ejemplo(msg){$("aviso").innerHTML='<p class="aviso">'+msg+"</p>";var R=parseCSV(EJEMPLO);var hoy=new Date(),f=function(d){var x=new Date(hoy-d*864e5);return x.getDate()+"/"+(x.getMonth()+1)+"/"+x.getFullYear()};R.forEach(function(r,i){if(i)r[0]=f(i<3?1:0)});cargar(R)}
+if(!CONFIG.csv){ejemplo("Ofertas de ejemplo: pega el link CSV de tu hoja en CONFIG para ver las tuyas.");return}
+$("lista").innerHTML='<li class="vacio">Cargando ofertas…</li>';
+fetch(CONFIG.csv+(CONFIG.csv.indexOf("?")<0?"?":"&")+"t="+Date.now()).then(function(r){if(!r.ok)throw new Error(r.status);return r.text()})
+ .then(function(t){var R=parseCSV(t);if(R.length<2)throw new Error("vacío");cargar(R)})
+ .catch(function(){$("lista").innerHTML='<li class="vacio">No pudimos cargar las ofertas. Recarga la página en un momento.</li>'});
+})();
+</script>
+</body>
+</html>
