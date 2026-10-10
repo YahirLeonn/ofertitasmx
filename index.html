@@ -7,7 +7,7 @@
 <meta name="description" content="Las mejores ofertas y cupones del día en Mercado Libre y más tiendas.">
 <meta property="og:title" content="OfertitasMx · ofertas del día">
 <meta property="og:description" content="Ofertas y cupones de Mercado Libre todos los días 🔥">
-<meta property="og:image" content="https://yahirleonn.github.io/ofertitasmx/portada.jpg">
+<meta property="og:image" content="https://ofertitasmx.github.io/portada.jpg">
 <meta name="theme-color" content="#62C8E3">
 <link rel="icon" href="logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,13 +17,13 @@
 /* =========  CAMBIA AQUÍ TUS DATOS  ========= */
 var CONFIG = {
   nombre: "OfertitasMx",
-  frase: "Ofertas y cupones de Mercado Libre todos los días 🔥",
+  frase: "Ofertas y cupones de Mercado Libre y AliExpress todos los días 🔥",
   // Link CSV de tu hoja publicada (Archivo → Compartir → Publicar en la web → pestaña Ofertas → CSV)
   csv: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQQ2QGDPJbRkdiR5OM2otgc3lT-EoAjvYyjugYbVLDHWf4WBn-oBxi51VcRqhtxV6iWPicVYZMFT-g1/pub?gid=2095902823&single=true&output=csv",
-  telegram: "https://web.telegram.org/a/#-1002461435872",   // ej. https://t.me/tucanal
-  whatsapp: "https://web.telegram.org/a/#-1002461435872",   // link de tu canal de WhatsApp
-  facebook: "https://www.facebook.com/share/1DH9Cx9UTb/?mibextid=wwXIfr",
-  instagram: "https://www.instagram.com/offertitas.mx?mdxt=MTUxMDMwZ2pnYXdwZg%3D%3D&utm_source=qr",
+  telegram: "https://t.me/OfertitasML",   // ej. https://t.me/tucanal
+  whatsapp: "",   // link de tu canal de WhatsApp
+  facebook: "https://www.facebook.com/share/1DH9Cx9UTb/",
+  instagram: "https://www.instagram.com/offertitas.mx/",
   tiktok: "",
   maximo: 60,     // cuántas ofertas mostrar
   top: 10         // resumen para WhatsApp: abre tu página con #admin al final
@@ -88,6 +88,7 @@ h1{margin:0;font-size:38px;line-height:1;font-weight:900;font-variation-settings
 .desc{position:absolute;top:-9px;right:12px;background:var(--rojo);color:#fff;font-weight:900;font-variation-settings:"wdth" 80;font-size:17px;padding:6px 10px 5px;border-radius:9px;transform:rotate(4deg);box-shadow:0 3px 0 rgba(14,27,43,.25);animation:pop .5s cubic-bezier(.2,1.6,.4,1) both;animation-delay:calc(var(--i,0)*45ms + .2s)}
 .meta{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:6px;font-size:13px;color:var(--gris)}
 .meta .env{color:var(--verde);font-weight:800}
+.meta .ae{background:#FFE9E4;color:#C4321A;font-weight:800;border-radius:6px;padding:0 6px}
 .ver{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:800;padding:12px;border-radius:12px;background:var(--amarillo);color:var(--tinta);box-shadow:0 3px 0 #C99300;transition:transform .12s,box-shadow .12s}
 .ver span{transition:transform .2s}
 .ver:hover span{transform:translateX(4px)}
@@ -185,16 +186,16 @@ var EMO=[[/tecnolog|celular|comput|electronic|audio|video|gaming|consola|camara/
 function emoji(c){c=norm(c).replace(/[^a-z ]/g," ");for(var i=0;i<EMO.length;i++)if(EMO[i][0].test(c))return EMO[i][1];return"🏷️"}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 
-function tienda(l){return /aliexpress|s\.click/i.test(l)?"Ver en AliExpress":/temu/i.test(l)?"Ver en Temu":/amzn|amazon/i.test(l)?"Ver en Amazon":/coppel/i.test(l)?"Ver en Coppel":"Ver en Mercado Libre"}
+function tienda(l,st){if(/aliexpress/i.test(st||""))return "Ver en AliExpress";if(/mercado/i.test(st||""))return "Ver en Mercado Libre";return /aliexpress|s\.click/i.test(l)?"Ver en AliExpress":/temu/i.test(l)?"Ver en Temu":/amzn|amazon/i.test(l)?"Ver en Amazon":/coppel/i.test(l)?"Ver en Coppel":"Ver en Mercado Libre"}
 var TODAS=[],CAT="",MOSTRAR=CONFIG.maximo||60;
 function cargar(rows){
   var H=rows[0].map(norm),col=function(){for(var i=0;i<arguments.length;i++){var j=H.indexOf(norm(arguments[i]));if(j>=0)return j}return -1};
-  var cT=col("Producto"),cL=col("Link de afiliado"),cC=col("Categoría"),cA=col("Precio ahora"),cP=col("Precio antes"),cE=col("Envío gratis"),cF=col("Fecha"),cU=col("Publicado"),cI=col("Imagen","Foto");
+  var cT=col("Producto"),cL=col("Link de afiliado"),cC=col("Categoría"),cA=col("Precio ahora"),cP=col("Precio antes"),cE=col("Envío gratis"),cF=col("Fecha"),cU=col("Publicado"),cI=col("Imagen","Foto"),cS=col("Tienda");
   var out=[];
   for(var i=rows.length-1;i>0;i--){var r=rows[i];var t=(r[cT]||"").trim(),l=(r[cL]||"").trim();
     if(!t||!/^https?:\/\//.test(l))continue;if(cU>=0&&r[cU]&&!/^s[ií]/i.test(r[cU].trim()))continue;
     var a=num(r[cA]),p=num(r[cP]);if(p&&a&&p<=a)p=0;
-    out.push({t:t,l:l,c:(r[cC]||"").trim(),a:a,p:p,d:p&&a?Math.round((1-a/p)*100):0,e:cE>=0&&/^s[ií]/i.test((r[cE]||"").trim()),f:fecha(r[cF]),img:cI>=0?(r[cI]||"").trim():""})}
+    out.push({t:t,l:l,c:(r[cC]||"").trim(),a:a,p:p,d:p&&a?Math.round((1-a/p)*100):0,e:cE>=0&&/^s[ií]/i.test((r[cE]||"").trim()),f:fecha(r[cF]),img:cI>=0?(r[cI]||"").trim():"",st:cS>=0?(r[cS]||"").trim():""})}
   out.sort(function(x,y){return (y.f?y.f.getTime():0)-(x.f?x.f.getTime():0)});
   var vistos={};TODAS=out.filter(function(o){var k=norm(o.t);if(vistos[k])return false;return vistos[k]=1});
   var cs={};TODAS.forEach(function(o){if(o.c)cs[o.c]=(cs[o.c]||0)+1});
@@ -211,8 +212,8 @@ function pintar(){
     li.innerHTML=(o.d>=5?'<span class="desc">-'+o.d+'%</span>':"")+
       '<div class="foto">'+(o.img?'<img src="'+esc(o.img)+'" alt="" loading="lazy" onerror="this.parentNode.innerHTML=\''+emoji(o.c)+'\'">':'<span aria-hidden="true">'+emoji(o.c)+"</span>")+"</div>"+
       '<div><h2 class="tit">'+esc(o.t)+'</h2><div class="precio">'+(o.a?'<span class="ahora"><small>$</small>'+money(o.a)+"</span>":"")+(o.p?'<span class="antes">$'+money(o.p)+"</span>":"")+"</div>"+
-      '<div class="meta">'+(o.e?'<span class="env">Envío gratis</span>':"")+(o.f?"<span>"+cuando(o.f)+"</span>":"")+(o.c?"<span>"+esc(o.c)+"</span>":"")+"</div></div>"+
-      '<a class="ver" href="'+esc(o.l)+'" target="_blank" rel="noopener sponsored">'+tienda(o.l)+' <span aria-hidden="true">→</span></a>';
+      '<div class="meta">'+(o.e?'<span class="env">Envío gratis</span>':"")+(o.f?"<span>"+cuando(o.f)+"</span>":"")+(o.c?"<span>"+esc(o.c)+"</span>":"")+(/aliexpress/i.test(o.st||o.l)?'<span class="ae">AliExpress</span>':"")+"</div></div>"+
+      '<a class="ver" href="'+esc(o.l)+'" target="_blank" rel="noopener sponsored">'+tienda(o.l,o.st)+' <span aria-hidden="true">→</span></a>';
     ul.appendChild(li)});
   $("mas").hidden=L.length<=MOSTRAR}
 $("q").addEventListener("input",function(){MOSTRAR=CONFIG.maximo||60;pintar()});
